@@ -1,32 +1,38 @@
-# React + TypeScript + Vite
+# TIQC Sticky Wall
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A live sticky-note wall for events. People scan a QR code, post a wish, a win or a thank-you from their phone, and watch it land on the big screen.
 
-Currently, two official plugins are available:
+**Live:** https://wall-of-wins-8x46.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+Vite + React + TypeScript on Vercel, with Supabase (Postgres, row-level security, Realtime).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Local development
 
-## Expanding the Oxlint configuration
+Needs Node 24+, Docker and the Supabase CLI.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+supabase start                # local database in Docker
+cp .env.example .env.local    # fill in from: supabase status -o env
+npm run seed:demo             # demo wall; prints its links
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Tests
+
+```bash
+npm test          # unit tests
+npm run test:db   # database security tests
+npm run build     # type-check + production build
+```
+
+## Creating walls
+
+```bash
+npm run new-event:cloud -- "Wall Title" wall-slug
+npm run walls:cloud
+```
+
+The full operations and maintenance guide is kept by the maintainer outside this repo.
