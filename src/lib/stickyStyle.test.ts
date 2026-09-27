@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { COLOR_KEYS, INK_KEYS, INKS, displayInk, randomLook, tiltFor } from './stickyStyle'
+import { COLOR_KEYS, COLORS, INK_KEYS, INKS, MIN_INK_CONTRAST, contrastRatio, displayInk, randomLook, tiltFor } from './stickyStyle'
 
 describe('randomLook', () => {
   it('covers the lowest and highest values without going out of range', () => {
@@ -30,12 +30,26 @@ describe('tiltFor', () => {
 })
 
 describe('displayInk', () => {
-  it('keeps the chosen ink on light stickies', () => {
+  it('keeps the poster\'s ink when it reads well', () => {
     expect(displayInk('lime', 'green')).toBe(INKS.green)
+    expect(displayInk('pink', 'blue')).toBe(INKS.blue)
     expect(displayInk('orange', 'blue')).toBe(INKS.blue)
   })
 
-  it.each(['pink', 'blue', 'peri'] as const)('forces black ink on %s for projector legibility', (color) => {
-    for (const ink of INK_KEYS) expect(displayInk(color, ink)).toBe(INKS.black)
+  it('swaps low-contrast ink (green on pink) for black', () => {
+    expect(contrastRatio(COLORS.pink, INKS.green)).toBeLessThan(MIN_INK_CONTRAST)
+    expect(displayInk('pink', 'green')).toBe(INKS.black)
+  })
+
+  it('never draws ink below the minimum contrast on any color', () => {
+    for (const color of COLOR_KEYS)
+      for (const ink of INK_KEYS) expect(contrastRatio(COLORS[color], displayInk(color, ink))).toBeGreaterThanOrEqual(MIN_INK_CONTRAST)
+  })
+})
+
+describe('contrastRatio', () => {
+  it('matches known WCAG values', () => {
+    expect(contrastRatio('#ffffff', '#000000')).toBeCloseTo(21, 5)
+    expect(contrastRatio('#777777', '#ffffff')).toBeCloseTo(4.48, 2)
   })
 })
