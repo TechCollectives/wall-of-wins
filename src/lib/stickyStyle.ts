@@ -43,11 +43,31 @@ export function randomLook(rand: () => number = Math.random): StickyLook {
   }
 }
 
+// Measured WCAG contrast: green/blue ink on pink, blue and peri is 1.4–3.3:1, unreadable on a
+// projector; black is ≥4.6:1 on every color. Lime and orange keep the poster's ink (≥3.5:1).
+const DARK_STICKIES: ReadonlySet<ColorKey> = new Set(['pink', 'blue', 'peri'])
+
+/** Ink actually drawn: the stored ink, unless it would be illegible on this sticky color. */
+export function displayInk(color: ColorKey, ink: InkKey): string {
+  return DARK_STICKIES.has(color) ? INKS.black : INKS[ink]
+}
+
 /** Tilt in degrees for a sticky, stable per id so it never jumps between renders. */
 export function tiltFor(id: string): number {
   let hash = 0
   for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) | 0
   return ((Math.abs(hash) % 61) - 30) / 10 // -3.0 .. 3.0
+}
+
+/**
+ * Font size (px) so `chars` characters of handwriting fit a square sticky of `size` px,
+ * leaving room for the name line. Computed, not measured, so 100 stickies never trigger
+ * layout thrash (eng review P2). Handwriting glyphs average ~0.5em wide at 1.2 line height.
+ */
+export function fitFontSize(chars: number, size: number): number {
+  const textArea = (size * 0.84) * (size * 0.68)
+  const fs = Math.sqrt(textArea / (Math.max(chars, 1) * 0.5 * 1.2)) * 0.9
+  return Math.round(Math.min(Math.max(fs, size * 0.055), size * 0.2) * 10) / 10
 }
 
 function pick<T>(items: readonly T[], rand: () => number): T {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { COLOR_KEYS, INK_KEYS, randomLook, tiltFor } from './stickyStyle'
+import { COLOR_KEYS, INK_KEYS, INKS, displayInk, randomLook, tiltFor } from './stickyStyle'
 
 describe('randomLook', () => {
   it('covers the lowest and highest values without going out of range', () => {
@@ -26,5 +26,16 @@ describe('tiltFor', () => {
       expect(t).toBeGreaterThanOrEqual(-3)
       expect(t).toBeLessThanOrEqual(3)
     }
+  })
+})
+
+describe('displayInk', () => {
+  it('keeps the chosen ink on light stickies', () => {
+    expect(displayInk('lime', 'green')).toBe(INKS.green)
+    expect(displayInk('orange', 'blue')).toBe(INKS.blue)
+  })
+
+  it.each(['pink', 'blue', 'peri'] as const)('forces black ink on %s for projector legibility', (color) => {
+    for (const ink of INK_KEYS) expect(displayInk(color, ink)).toBe(INKS.black)
   })
 })
