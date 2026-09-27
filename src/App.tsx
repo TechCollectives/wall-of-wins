@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { PostPage } from './pages/PostPage'
 import { WallPage } from './pages/WallPage'
 
@@ -13,12 +14,14 @@ function Home() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/e/:slug" element={<PostPage />} />
-        <Route path="/e/:slug/wall" element={<WallPage />} />
-        <Route path="*" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/e/:slug" element={<PostPage />} />
+          <Route path="/e/:slug/wall" element={<WallPage />} />
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }

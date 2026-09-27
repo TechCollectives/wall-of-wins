@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useWallEvent } from '../lib/events'
+import { newId } from '../lib/ids'
 import {
   canSubmit,
   initialState,
@@ -28,7 +29,7 @@ const NAME_KEY = 'wall-name'
 const draftKey = (slug: string) => `wall-draft:${slug}`
 
 function freshDraft(): Draft {
-  return { id: crypto.randomUUID(), text: '', type: null, ...randomLook() }
+  return { id: newId(), text: '', type: null, ...randomLook() }
 }
 
 function readStorage(key: string): string | null {
