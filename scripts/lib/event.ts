@@ -25,6 +25,13 @@ export function eventLinks(appUrl: string, slug: string, token: string) {
 
 export function parseArgs(argv: string[]): { title: string; slug: string } | { error: string } {
   const [title, slug] = argv
+  // Notes/chat apps turn " into “ ” and - into — ; the terminal doesn't treat those as quotes or hyphens.
+  if (argv.some((a) => /[“”‘’—–]/.test(a)))
+    return {
+      error:
+        'Found curly quotes (“ ”) or a long dash (—) — usually from copying out of Notes or a chat app.\n' +
+        'Retype them in Terminal as straight quotes (") and a plain hyphen (-).',
+    }
   if (!title || !slug) return { error: 'Usage: npm run new-event -- "Summer 2026 Intern Wall" summer-26' }
   if (!SLUG_PATTERN.test(slug)) return { error: `Slug "${slug}" must be 2–41 chars: lowercase letters, digits, dashes.` }
   if (title.length > 120) return { error: 'Title must be 120 characters or fewer.' }
