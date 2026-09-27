@@ -367,3 +367,14 @@ button:disabled {
   font-size: 24px;
   font-family: 'Caveat', cursive;
 }
+
+.closed-note {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  height: fit-content;
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 48px;
+  opacity: 0.8;
+}

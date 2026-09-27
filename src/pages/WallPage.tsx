@@ -2,7 +2,7 @@ import QRCode from 'qrcode'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Sticky } from '../components/Sticky'
-import { takeAdminToken } from '../lib/admin'
+import { useAdminToken } from '../lib/admin'
 import { toCsv, type ExportRow } from '../lib/csv'
 import { useWallEvent } from '../lib/events'
 import { FONTS } from '../lib/stickyStyle'
@@ -64,7 +64,7 @@ function QrCard({ url, size, big }: { url: string; size: number; big?: boolean }
 export function WallPage() {
   const { slug = '' } = useParams()
   const [load, setEvent] = useWallEvent(slug)
-  const [adminToken] = useState(() => takeAdminToken(slug))
+  const adminToken = useAdminToken(slug)
   const fontsReady = useFontsReady()
   const [boardRef, board] = useElementSize<HTMLDivElement>()
 
@@ -197,7 +197,11 @@ export function WallPage() {
         {fontsReady && board.width > 0 && (
           <>
             {wall.stickies.length === 0 ? (
-              <QrCard url={url} size={0} big />
+              event.is_open ? (
+                <QrCard url={url} size={0} big />
+              ) : (
+                <p className="closed-note">This wall is closed.</p>
+              )
             ) : (
               <>
                 <div
@@ -224,7 +228,8 @@ export function WallPage() {
                     />
                   ))}
                 </div>
-                <QrCard url={url} size={grid.size} />
+                {/* No "scan to add yours" once the wall is closed. */}
+                {event.is_open && <QrCard url={url} size={grid.size} />}
               </>
             )}
           </>

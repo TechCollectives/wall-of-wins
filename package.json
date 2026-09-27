@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:db": "supabase test db",
     "new-event": "node --env-file=.env.local scripts/new-event.ts",
-    "seed:demo": "node --env-file=.env.local scripts/seed-demo.ts"
+    "seed:demo": "node --env-file=.env.local scripts/seed-demo.ts",
+    "new-event:cloud": "node --env-file=.env.cloud.local scripts/new-event.ts"
   },
   "dependencies": {
     "@fontsource/caveat": "^5.3.0",
