@@ -2,6 +2,10 @@
 -- Run: supabase test db
 begin;
 create extension if not exists pgtap with schema extensions;
+-- `supabase test db --linked` logs in as cli_login_postgres, which can't use the
+-- `extensions` schema where pgTAP lives. Run as postgres, like the local stack does.
+set local role postgres;
+set local search_path = extensions, public;
 select plan(29);
 
 -- ---------------------------------------------------------------- fixtures (as postgres)
@@ -160,7 +164,7 @@ select throws_ok(
 
 -- ---------------------------------------------------------------- realtime
 
-reset role;
+set local role postgres;
 
 select is(
   (select count(*)::int from pg_publication_tables
